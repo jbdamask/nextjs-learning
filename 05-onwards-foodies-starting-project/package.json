@@ -1,0 +1,28 @@
+{
+  "name": "foodies",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.626.0",
+    "@emotion/react": "^11.13.0",
+    "@emotion/styled": "^11.13.0",
+    "@mui/material": "^5.16.6",
+    "@supabase/supabase-js": "^2.45.0",
+    "next": "14.0.3",
+    "react": "^18",
+    "react-dom": "^18",
+    "slugify": "^1.6.6",
+    "uuid": "^10.0.0",
+    "xss": "^1.0.15"
+  },
+  "devDependencies": {
+    "eslint": "^8",
+    "eslint-config-next": "14.0.3"
+  }
+}
