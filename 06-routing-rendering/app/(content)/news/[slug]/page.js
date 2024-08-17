@@ -1,18 +1,18 @@
 import React from 'react';
 import Image from 'next/image';
-import { DUMMY_NEWS } from '../../../../dummy-news';
+import { getNews } from '@/lib/utils-news';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 
-export default function NewsArticlePage({ params }) {
+export default async function NewsArticlePage({ params }) {
   const { slug } = params;
 
-  const news = DUMMY_NEWS.find(news => news.slug === slug);
+  const news = await getNews(slug);
 
   if (!news) {
     notFound();
   }
-console.log(news.slug);
+
   return (
     <article className='news-article'>
       <Link href={`/news/${news.slug}/image`}>
