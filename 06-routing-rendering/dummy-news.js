@@ -84,5 +84,7 @@ async function loadDummyNewsIntoSupabase() {
   }
 }
 
-// Call this function to load the data into Supabase
-loadDummyNewsIntoSupabase();
+// Uncomment this function to load the data into Supabase on app initiation
+// Note that if you leave it uncommented, NextJS may do some weird shit that causes
+// this script to re-execute and create duplicate data.
+// loadDummyNewsIntoSupabase();

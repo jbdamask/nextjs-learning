@@ -31,7 +31,7 @@ export default function ArchiveYearPage({ params }) {
             <header id="archive-header">
                 <nav>
                     <ul>
-                        {links.map(link => {
+                        {Array.isArray(links) ? links.map(link => {
                             const href = selectedYear 
                                 ? `/archive/${selectedYear}/${link}` 
                                 : `/archive/${link}`;
@@ -41,7 +41,7 @@ export default function ArchiveYearPage({ params }) {
                                     <Link href={href}>{link}</Link>
                                 </li>
                             )
-                        })}
+                        }) : <p>No links available</p>}
                     </ul>
                 </nav>
             </header>

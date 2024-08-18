@@ -13,9 +13,18 @@ export default async function NewsArticlePage({ params }) {
     notFound();
   }
 
+  console.log(`/news/${news.slug}/image`);
+
   return (
     <article className='news-article'>
-      <Link href={`/news/${news.slug}/image`}>
+      <Link 
+        href={{
+          pathname: `/news/${news.slug}/image`,
+          query: { title: news.title, image: news.image }
+        }}
+        aria-label={`View full-size image of ${news.title}`}
+        className='news-article__image'
+      >
         <Image 
           src={`/images/news/${news.image}`} 
           alt={news.title} 

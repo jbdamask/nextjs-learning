@@ -1,24 +1,22 @@
 import React from 'react';
 import Image from 'next/image';
-import {DUMMY_NEWS} from '@/dummy-news';
 
-export default function InterceptorLink({ params }) {
+export default function InterceptorLink({ params, searchParams }) {
   const { slug } = params;
+  const { title, image } = searchParams;
+  
+  console.log("News.image received params:", { slug, title, image });
 
-  const news = DUMMY_NEWS.find(news => news.slug === slug);
-
-  // console.log(news);
-  // if (!news) {
-  //   router.push('/404');
-  //   return null;
-  // }
+  if (!image || !title) {
+    return <div>Image information not provided</div>;
+  }
 
   return (
     <>
-    <h2>Intercepted</h2>
-    <div>
-      <Image src={`/images/news/${news.image}`} alt={news.title} fill />
-    </div>
+      <h2>Intercepted</h2>
+      <div>
+        <Image src={`/images/news/${image}`} alt={title} width={800} height={600} />
+      </div>
     </>
   );
 }

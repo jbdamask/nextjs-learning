@@ -1,5 +1,5 @@
 export async function GET(req, res) {
-    console.log(req);
+    console.log("request:", req);
   return new Response("Hello, Next.js!");
 }
 
