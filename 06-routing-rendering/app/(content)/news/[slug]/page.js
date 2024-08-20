@@ -13,8 +13,6 @@ export default async function NewsArticlePage({ params }) {
     notFound();
   }
 
-  console.log(`/news/${news.slug}/image`);
-
   return (
     <article className='news-article'>
       <Link 
@@ -28,8 +26,8 @@ export default async function NewsArticlePage({ params }) {
         <Image 
           src={`/images/news/${news.image}`} 
           alt={news.title} 
-          width={200} 
-          height={150}
+          width={112} 
+          height={112}
         />
       </Link>
       <h1>{news.title}</h1>

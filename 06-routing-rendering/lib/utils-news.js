@@ -38,38 +38,77 @@ export async function getAvailableNewsYears() {
     .from('news')
     .select('date')
     .order('date', { ascending: false });
+  
   if (error) throw error;
-  return [...new Set(data.map(news => new Date(news.date).getFullYear()))];
+  
+  const years = data.map(item => {
+    // Directly extract the year from the date string
+    const year = parseInt(item.date.split('-')[0], 10);
+
+    return year;
+  });
+  
+  const uniqueYears = [...new Set(years)];
+  return uniqueYears;
 }
 
 export async function getAvailableNewsMonths(year) {
+  const startDate = `${year}-01-01`;
+  const endDate = `${year}-12-31`;
+  
   const { data, error } = await supabase
     .from('news')
     .select('date')
-    .eq('date.year', year)
+    .gte('date', startDate)
+    .lte('date', endDate)
     .order('date', { ascending: false });
-  if (error) throw error;
-  return [...new Set(data.map(news => new Date(news.date).getMonth() + 1))];
+
+  if (error) {
+    console.error("Supabase query error:", error);
+    throw error;
+  }
+
+  // Use the actual month from the date string, not JavaScript's getMonth()
+  const months = [...new Set(data.map(item => parseInt(item.date.split('-')[1], 10)))];
+  return months.sort((a, b) => a - b);
 }
 
 export async function getNewsForYear(year) {
+  const startDate = `${year}-01-01`;
+  const endDate = `${year}-12-31`;
+  
   const { data, error } = await supabase
     .from('news')
     .select('*')
-    .eq('date.year', year)
+    .gte('date', startDate)
+    .lte('date', endDate)
     .order('date', { ascending: false });
-  if (error) throw error;
+  
+  if (error) {
+    console.error("Supabase query error:", error);
+    throw error;
+  }
+  
   return data;
 }
 
 export async function getNewsForYearAndMonth(year, month) {
+  // Ensure month is treated as 1-12, not 0-11
+  const startDate = `${year}-${month.toString().padStart(2, '0')}-01`;
+  const endDate = new Date(year, month, 0).toISOString().split('T')[0]; // Last day of the month
+  
   const { data, error } = await supabase
     .from('news')
     .select('*')
-    .eq('date.year', year)
-    .eq('date.month', month)
+    .gte('date', startDate)
+    .lte('date', endDate)
     .order('date', { ascending: false });
-  if (error) throw error;
+
+  if (error) {
+    console.error("Supabase query error:", error);
+    throw error;
+  }
+
   return data;
 }
 
@@ -93,7 +132,6 @@ export async function getNews(slug) {
   return data;
 }
 
-
 export async function saveNews(news) {
   news.slug = `${slugify(news.slug, { lower: true })}-${uuidv4()}`,
   news.title = xss(news.title);
@@ -102,7 +140,6 @@ export async function saveNews(news) {
 
   const extension = news.image.name.split('.').pop();
   const filename = `${uuidv4()}.${extension}`;
-  // console.log('filename', filename);
   const bufferedImage = await news.image.arrayBuffer();
 
   try {
@@ -134,55 +171,3 @@ export async function saveNews(news) {
 
   return await getLatestNews(); // reload the news
 }
-
-// import { DUMMY_NEWS } from '@/dummy-news';
-
-// export function getAllNews() {
-//   return DUMMY_NEWS;
-// }
-
-// export function getLatestNews() {
-//   return DUMMY_NEWS
-//     .slice()
-//     .sort((a, b) => new Date(b.date) - new Date(a.date))
-//     .slice(0, 2);
-// }
-
-// export function getAvailableNewsYears() {
-//   return DUMMY_NEWS.reduce((years, news) => {
-//     const year = new Date(news.date).getFullYear();
-//     if (!years.includes(year)) {
-//       years.push(year);
-//     }
-//     return years;
-//   }, []).sort((a, b) => b - a);
-// }
-
-// export function getAvailableNewsMonths(year) {
-//   return DUMMY_NEWS.reduce((months, news) => {
-//     const newsYear = new Date(news.date).getFullYear();
-//     if (newsYear === +year) {
-//       const month = new Date(news.date).getMonth();
-//       if (!months.includes(month)) {
-//         months.push(month + 1);
-//       }
-//     }
-//     return months;
-//   }, []).sort((a, b) => b - a);
-// }
-
-// export function getNewsForYear(year) {
-//   return DUMMY_NEWS.filter((news) => {
-//     const newsDate = new Date(news.date);
-//     const newsYear = newsDate.getFullYear();
-//     return newsYear === Number(year);
-//   });
-// }
-
-// export function getNewsForYearAndMonth(year, month) {
-//   return DUMMY_NEWS.filter((news) => {
-//     const newsYear = new Date(news.date).getFullYear();
-//     const newsMonth = new Date(news.date).getMonth() + 1;
-//     return newsYear === +year && newsMonth === +month;
-//   });
-// }

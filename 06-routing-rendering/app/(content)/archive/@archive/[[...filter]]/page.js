@@ -2,22 +2,28 @@ import NewsList from "@/components/news-list";
 import { getAllNews, getAvailableNewsMonths, getAvailableNewsYears, getNewsForYear, getNewsForYearAndMonth } from "@/lib/utils-news";
 import Link from "next/link";
 
-export default function ArchiveYearPage({ params }) {
+export default async function ArchiveYearPage({ params }) {
     const filter = params.filter;
     const selectedYear = filter?.[0];
     const selectedMonth = filter?.[1];
 
     let news;
-    let links = getAvailableNewsYears();    
+    let links = await getAvailableNewsYears();    
 
     if(selectedYear && !selectedMonth) {    
-        news = getNewsForYear(selectedYear);
-        links = getAvailableNewsMonths(selectedYear);
+        try {
+            news = await getNewsForYear(selectedYear);
+            links = await getAvailableNewsMonths(selectedYear);
+
+        } catch (error) {
+            console.error("Error fetching news for year:", error);
+            news = [];
+        }
     } else if(selectedYear && selectedMonth) {
-        news = getNewsForYearAndMonth(selectedYear, selectedMonth);
+        news = await getNewsForYearAndMonth(selectedYear, selectedMonth);
         links = []
     } else {
-        news = getAllNews();
+        news = await getAllNews();
     }
 
     let newsContent = <p>No news found for the selected period.</p>;
